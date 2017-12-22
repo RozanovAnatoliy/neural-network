@@ -8,45 +8,53 @@ if not exist "%LOG_DIR%" mkdir "%LOG_DIR%"
 if not exist "%BUILD_DIR%" mkdir "%BUILD_DIR%"
 cd "%BUILD_DIR%"
 
-call :arguments_parsing %*
+call :flags_initialization
+
+:LOOP
+set arg=%~1
+set next_arg=%~2
+
+if "x%arg%" == "x" goto ENDLOOP
+
+if "%arg%" == "--cmake" (
+    set run_cmake_enable=true
+) else if "%arg%" == "--build" (
+    set build_enable=true
+) else if "%arg%" == "-G" (
+    set generator=%next_arg%
+    shift
+) else if "%arg%" == "--help" (
+    call :help
+    goto end
+) else (
+    echo Arg = "%arg%"
+    call :help
+    goto end
+)
+
+shift
+goto LOOP
+:ENDLOOP
+
+if "x%run_cmake_enable%"  == "xtrue" call :cmake
+if "x%run_build%"  == "xtrue" call :build
 goto end
 
 :help
-    echo  Usage:  build.bat --cmake        Create a project
-    echo          build.bat --build        Compile the project
+    echo  Usage:  build.bat --cmake                                   Create a VS 2015 project
+    echo          build.bat --cmake -G "Visual Studio 15 2017"        Create a VS 2017 project
+    echo          build.bat --build                                   Compile the project
     exit /b
 
-:arguments_parsing
-    set args_for_processing=%*
-    if "x%args_for_processing%" == "x" (
-        call :help
-        exit /b
-    )
-    
-    :LOOP
-    if "x%args_for_processing%" == "x" exit /b
-    for /f "tokens=1,2 delims= " %%G in ("%args_for_processing%") do (
-        set arg=%%G
-        set next_arg=%%H
-    )
-
-    if "%arg%" == "--cmake" (
-        call :cmake
-    ) else if "%arg%" == "--build" (
-        call :build
-    ) else (
-        echo Arg = "%arg%"
-        call :help
-        exit /b
-    )
-
-    call set args_for_processing=%%args_for_processing:%arg% =%%
-    call set args_for_processing=%%args_for_processing:%arg%=%%
-    goto LOOP
+:flags_initialization
+    set run_cmake_enable=
+    set build_enable=
+    set generator=Visual Studio 14 2015
+    exit /b
 
 :cmake
     echo -- Create a project ...
-    cmake "%ROOT_DIR%"
+    cmake -G "%generator%" "%ROOT_DIR%"
     echo -- Create a project. Done
     exit /b
 

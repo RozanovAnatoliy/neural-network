@@ -1,14 +1,14 @@
 # Fully connected neural network
 
-Fully connected neural network with one hidden layer for detection MNIST dataset.  
+Fully connected neural network with one hidden layer for classification of handwritten digits.  
 Activate function on output layer: softmax  
 Error on output layer: cross-entropy  
 MNIST dataset: http://yann.lecun.com/exdb/mnist/
 
 ## Instalation
 ### Windows
-Create visual studio project in _build folder:  
-&nbsp;&nbsp;&nbsp;&nbsp; build_windows.bat --cmake  
+Create visual studio 2015 project in _build folder:  
+&nbsp;&nbsp;&nbsp;&nbsp; build_windows.bat --cmake -G "Visual Studio 14 2015"  
 Compile project. Binary file will be in _bin folder:  
 &nbsp;&nbsp;&nbsp;&nbsp; build_windows.bat --build  
 ### Linux
@@ -40,4 +40,5 @@ NeuralNetwork.exe --trainImages=train-images.idx3-ubyte --minError=0.05 --numHid
 
 ## Results (default parameters)
 train accuracy: 0.999517  
-test accuracy: 0.9715  
+test accuracy: 0.9715,  
+where accuracy = number of correct classifications / (number of correct classifications + number of incorrect classifications)
